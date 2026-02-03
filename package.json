@@ -1,6 +1,7 @@
 {
   "name": "forjando-milionarios",
   "version": "1.0.0",
+  "description": "Sistema Forjando Milionarios",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
@@ -11,8 +12,7 @@
     "qrcode": "^1.5.3",
     "express": "^4.18.2",
     "cors": "^2.8.5",
-    "node-cron": "^3.0.3",
-    "puppeteer": "^21.6.0"
+    "node-cron": "^3.0.3"
   },
   "engines": {
     "node": ">=18.0.0"
