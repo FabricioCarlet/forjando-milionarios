@@ -2,12 +2,10 @@ services:
   - type: web
     name: forjando-milionarios
     runtime: node
-    buildCommand: npm install && npx puppeteer browsers install chrome
-    startCommand: npm start
+    buildCommand: "rm -rf node_modules && npm install"
+    startCommand: "node app.js"
     envVars:
-      - key: NODE_ENV
-        value: production
-      - key: ADMIN_SENHA
-        value: 22120929
-      - key: PUPPETEER_CACHE_DIR
-        value: /opt/render/.cache/puppeteer
+      - key: NODE_VERSION
+        value: 18.17.0
+      - key: PUPPETEER_SKIP_DOWNLOAD
+        value: "true"
