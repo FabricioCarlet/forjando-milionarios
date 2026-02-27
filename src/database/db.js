@@ -1,90 +1,86 @@
-const fs = require('fs');
-const path = require('path');
-
-const DB_PATH = path.join(__dirname, '../../data/sistema.json');
-const LOG_PATH = path.join(__dirname, '../../data/logs.txt');
+const { MongoClient } = require('mongodb');
 
 class Database {
-  constructor() {
-    this.data = this.carregar();
-  }
-
-  carregar() {
-    try {
-      if (!fs.existsSync(DB_PATH)) {
-        const inicial = {
-          admin: {
-            numero: process.env.ADMIN_NUMERO || '5511999999999',
-            nome: 'Administrador',
-            total_arrecadado: 0,
-            participantes: []
-          },
-          participantes: {},
-          transacoes: [],
-          config: {
-            valor_fase: 10,
-            max_fases: 5,
-            ativo: true
-          }
-        };
-        this.salvar(inicial);
-        return inicial;
-      }
-      return JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
-    } catch (erro) {
-      console.error('Erro ao carregar banco:', erro);
-      process.exit(1);
+    constructor() {
+        this.client = new MongoClient(process.env.MONGO_URL || 'mongodb://localhost:27017');
+        this.dbName = 'forja_extrema';
+        this.collection = null;
     }
-  }
 
-  salvar(dados = this.data) {
-    try {
-      if (!fs.existsSync(path.dirname(DB_PATH))) {
-        fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-      }
-      fs.writeFileSync(DB_PATH, JSON.stringify(dados, null, 2));
-      this.log('SISTEMA', 'Dados persistidos com sucesso');
-    } catch (erro) {
-      console.error('Erro ao salvar:', erro);
+    async conectar() {
+        try {
+            await this.client.connect();
+            const db = this.client.db(this.dbName);
+            this.collection = db.collection('participantes');
+            
+            // Índices para evitar duplicidade
+            await this.collection.createIndex({ numero: 1 }, { unique: true });
+            await this.collection.createIndex({ cpf: 1 }, { unique: true });
+            
+            console.log("🔌 MongoDB Conectado: Pronto para Adoção de Órfãos!");
+        } catch (err) {
+            console.error("❌ Erro ao conectar banco:", err);
+        }
     }
-  }
 
-  log(categoria, mensagem) {
-    const linha = `[${new Date().toISOString()}] [${categoria}] ${mensagem}\n`;
-    fs.appendFileSync(LOG_PATH, linha);
-  }
+    async criarParticipante(dados) {
+        return await this.collection.insertOne({
+            ...dados,
+            dataCadastro: new Date()
+        });
+    }
 
-  getParticipante(numero) {
-    return this.data.participantes[numero];
-  }
+    async buscarParticipante(numero) {
+        return await this.collection.findOne({ numero });
+    }
 
-  addParticipante(numero, dados) {
-    this.data.participantes[numero] = {
-      ...dados,
-      admin_cadastrador: this.data.admin.numero,
-      fase_atual: 1,
-      status: 'aguardando_amigos',
-      data_entrada: new Date().toISOString(),
-      amigos: { amigo_1: null, amigo_2: null },
-      confirmacoes: {
-        fase_1: { amigo_1: false, amigo_2: false, doacao_admin: false },
-        fase_2: { amigo_1: false, amigo_2: false, doacao_admin: false },
-        fase_3: { amigo_1: false, amigo_2: false, doacao_admin: false },
-        fase_4: { amigo_1: false, amigo_2: false, doacao_admin: false },
-        fase_5: { amigo_1: false, amigo_2: false, doacao_admin: false }
-      },
-      bloqueado: false,
-      historico: []
-    };
-    this.data.admin.participantes.push(numero);
-    this.salvar();
-    return this.data.participantes[numero];
-  }
+    async buscarPorNumeroOuCPF(numero, cpf) {
+        return await this.collection.findOne({ $or: [{ numero }, { cpf }] });
+    }
 
-  atualizarParticipante(numero, dados) {
-    this.data.participantes[numero] = { ...this.data.participantes[numero], ...dados };
-    this.salvar();
-  }
+    async atualizarStatus(idFinal, novoStatus) {
+        const updateData = { status: novoStatus };
+        if (novoStatus === 'ativo') {
+            updateData.dataAtivacao = new Date();
+        }
+        return await this.collection.updateOne(
+            { numero: idFinal },
+            { $set: updateData }
+        );
+    }
+
+    async atualizarFase(idFinal, novaFase) {
+        return await this.collection.updateOne(
+            { numero: idFinal },
+            { $set: { fase: parseInt(novaFase) } }
+        );
+    }
+
+    // --- NOVAS FUNÇÕES DE GESTÃO E ADOÇÃO ---
+
+    async adotarOrfaos(numeroPaiDeletado, numeroAdmin) {
+        // Altera o indicadoPor de todos os filhos para o Admin
+        return await this.collection.updateMany(
+            { indicadoPor: numeroPaiDeletado },
+            { $set: { indicadoPor: numeroAdmin + '@c.us' } }
+        );
+    }
+
+    async removerPorExpiracao(numero) {
+        return await this.collection.deleteOne({ numero });
+    }
+
+    async buscarRede(numeroPai) {
+        return await this.collection.find({ indicadoPor: numeroPai }).toArray();
+    }
+
+    async listarTudo() {
+        return await this.collection.find().toArray();
+    }
+
+    async resetarBancoTotal() {
+        return await this.collection.deleteMany({});
+    }
 }
 
 module.exports = new Database();

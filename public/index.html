@@ -3,298 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forjando Milionários</title>
+    <title>Forja Extrema | Oficial</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-        .container { max-width: 480px; margin: 0 auto; padding: 20px; }
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        h1 { text-align: center; color: #667eea; margin-bottom: 8px; font-size: 24px; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 24px; font-size: 14px; }
-        .fase-indicator {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-        }
-        .fase {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 12px;
-            background: #e0e0e0;
-            color: #666;
-        }
-        .fase.active { background: #667eea; color: white; transform: scale(1.1); }
-        .fase.completed { background: #4caf50; color: white; }
-        .btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            background: #667eea;
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 12px;
-            transition: transform 0.2s;
-        }
-        .btn:active { transform: scale(0.98); }
-        .btn:disabled { background: #ccc; cursor: not-allowed; }
-        .btn.secondary { background: #f0f0f0; color: #333; }
+        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --danger: #ef4444; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--bg); color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .card { background: var(--card); padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; border: 1px solid #334155; position: relative; overflow: hidden; }
+        h1 { color: var(--primary); text-align: center; margin-bottom: 20px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 12px; color: #94a3b8; font-weight: bold; }
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; outline: none; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; background: var(--primary); color: #0f172a; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-link { background: none; color: var(--primary); text-decoration: underline; font-size: 13px; margin-top: 15px; width: 100%; text-align: center; border: none; cursor: pointer; }
+        .hidden { display: none; }
+        .status-box { background: #334155; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--primary); }
         
-        .input-group { margin: 12px 0; }
-        .input-group label { display: block; margin-bottom: 6px; font-size: 14px; color: #555; font-weight: 600; }
-        .input-group input {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-        }
-        .input-group input:focus { border-color: #667eea; outline: none; }
+        /* PROVA SOCIAL */
+        #prova-social { background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 8px; border-radius: 5px; font-size: 11px; text-align: center; margin-bottom: 15px; border: 1px solid #10b981; display: none; }
         
-        .status-box {
-            background: #f5f5f5;
-            border-radius: 12px;
-            padding: 16px;
-            margin: 16px 0;
-        }
-        .status-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        .status-item:last-child { border-bottom: none; }
+        /* CRONÔMETRO */
+        .timer-container { margin-top: 15px; text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid #475569; }
+        #cronometro { font-size: 24px; font-weight: bold; font-family: monospace; }
+        .piscando { color: var(--danger) !important; animation: blink 1s infinite; font-size: 28px !important; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         
-        .hidden { display: none !important; }
-        .saldo { font-size: 32px; text-align: center; color: #4caf50; font-weight: bold; margin: 16px 0; }
-        
-        @media (max-width: 480px) {
-            .container { padding: 12px; }
-            .card { padding: 20px; border-radius: 12px; }
-        }
+        .amigo-slot { background: #0f172a; padding: 15px; border-radius: 8px; margin-top: 10px; border: 1px dashed #334155; }
+        .badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Tela de Login -->
-        <div id="tela-login" class="card">
-            <h1>👑 Forjando Milionários</h1>
-            <p class="subtitle">Sistema de Doações Voluntárias</p>
-            
-            <div class="input-group">
-                <label>Seu número ( WhatsApp )</label>
-                <input type="tel" id="login-numero" placeholder="5511999999999">
-            </div>
-            <button class="btn" onclick="login()">Acessar</button>
-            <p style="text-align: center; margin-top: 16px; font-size: 12px; color: #999;">
-                Versão PWA v1.0
-            </p>
-        </div>
 
-        <!-- Dashboard -->
-        <div id="tela-dashboard" class="hidden">
-            <div class="card">
-                <h2>Olá, <span id="nome-user">Participante</span></h2>
-                <div class="fase-indicator" id="fases-indicator">
-                    <div class="fase active">1</div>
-                    <div class="fase">2</div>
-                    <div class="fase">3</div>
-                    <div class="fase">4</div>
-                    <div class="fase">5</div>
-                </div>
-                <div class="saldo">R$ <span id="saldo-valor">0</span>,00</div>
-                <p style="text-align: center; color: #666; font-size: 14px;">Lucro acumulado</p>
-            </div>
+<div class="card">
+    <div id="prova-social"></div>
 
-            <div class="card">
-                <h3 style="margin-bottom: 16px;">Fase Atual: <span id="fase-atual">1</span>/5</h3>
-                
-                <div id="painel-amigos">
-                    <div class="input-group">
-                        <label>Amigo 1 (Nome)</label>
-                        <input type="text" id="amigo1-nome" placeholder="Nome do primeiro amigo">
-                        <input type="tel" id="amigo1-num" placeholder="Número" style="margin-top: 8px;">
-                    </div>
-                    <div class="input-group">
-                        <label>Amigo 2 (Nome)</label>
-                        <input type="text" id="amigo2-nome" placeholder="Nome do segundo amigo">
-                        <input type="tel" id="amigo2-num" placeholder="Número" style="margin-top: 8px;">
-                    </div>
-                    <button class="btn" onclick="salvarAmigos()">Salvar Amigos</button>
-                </div>
-
-                <div id="painel-fase" class="hidden">
-                    <div class="status-box">
-                        <div class="status-item">
-                            <span>Recebido Amigo 1</span>
-                            <span id="check-a1">⏳</span>
-                        </div>
-                        <div class="status-item">
-                            <span>Recebido Amigo 2</span>
-                            <span id="check-a2">⏳</span>
-                        </div>
-                        <div class="status-item">
-                            <span>Doação Admin</span>
-                            <span id="check-admin">⏳</span>
-                        </div>
-                    </div>
-                    
-                    <button class="btn" id="btn-conf-a1" onclick="confirmar('amigo1')">
-                        Confirmar: Recebi do Amigo 1
-                    </button>
-                    <button class="btn" id="btn-conf-a2" onclick="confirmar('amigo2')" style="margin-top: 8px;">
-                        Confirmar: Recebi do Amigo 2
-                    </button>
-                    <button class="btn secondary" id="btn-doado" onclick="confirmarDoacao()" style="margin-top: 8px;">
-                        Confirme: Doei ao Admin
-                    </button>
-                </div>
-            </div>
-
-            <div class="card" style="background: #fff3cd; border: 1px solid #ffeaa7;">
-                <h4 style="color: #856404; margin-bottom: 8px;">📋 Instruções</h4>
-                <p style="font-size: 13px; color: #856404; line-height: 1.5;">
-                    1. Cadastre seus 2 amigos<br>
-                    2. Receba R$10 de cada um<br>
-                    3. Doe R$10 ao Admin<br>
-                    4. Avance para próxima fase<br>
-                    5. Repita até a Fase 5
-                </p>
-            </div>
-        </div>
+    <div id="sessao-cadastro">
+        <h1>👑 Cadastre-se</h1>
+        <p id="info-indicador" style="text-align:center; font-size:11px; margin-bottom:15px; color:#38bdf8"></p>
+        <div class="input-group"><label>NOME COMPLETO</label><input type="text" id="reg-nome"></div>
+        <div class="input-group"><label>WHATSAPP</label><input type="tel" id="reg-numero" placeholder="19982020202"></div>
+        <div class="input-group"><label>CPF</label><input type="text" id="reg-cpf" maxlength="11"></div>
+        <button class="btn" onclick="apiCadastrar()">CRIAR MINHA CONTA</button>
+        <button class="btn-link" onclick="alternarTela('sessao-login')">Já sou cadastrado? Entrar</button>
     </div>
 
-    <script>
-        let usuarioAtual = null;
-        let dadosUsuario = null;
-        
-        // Simulação de banco local (em produção, conecta à API)
-        const API_URL = window.location.origin;
-        
-        async function login() {
-            const num = document.getElementById('login-numero').value;
-            if (!num) return alert('Digite seu número');
+    <div id="sessao-login" class="hidden">
+        <h1>🔐 Entrar</h1>
+        <div class="input-group"><label>SEU WHATSAPP</label><input type="tel" id="login-numero"></div>
+        <div class="input-group"><label>SUA SENHA</label><input type="password" id="login-senha"></div>
+        <button class="btn" onclick="apiLogin()">ACESSAR PAINEL</button>
+        <button class="btn-link" onclick="alternarTela('sessao-cadastro')">Voltar</button>
+    </div>
+
+    <div id="sessao-painel" class="hidden">
+        <h1>Área do Membro</h1>
+        <div class="status-box">
+            <p>Olá, <b id="user-nome"></b>!</p>
+            <p>Status: <span id="user-status"></span></p>
+            <p>Fase Atual: <b id="user-fase"></b></p>
             
-            // Aqui você integraria com seu backend
-            // const res = await fetch(`${API_URL}/api/status/${num}`);
-            // dadosUsuario = await res.json();
-            
-            // Simulação para teste:
-            dadosUsuario = {
-                nome: 'João',
-                fase: 1,
-                status: 'aguardando_amigos',
-                amigos: { amigo_1: null, amigo_2: null },
-                confirmacoes: { amigo1: false, amigo2: false, admin: false },
-                lucro: 0
-            };
-            
-            document.getElementById('tela-login').classList.add('hidden');
-            document.getElementById('tela-dashboard').classList.remove('hidden');
-            atualizarUI();
+            <div id="timer-box" class="timer-container hidden">
+                <p style="font-size: 10px; color: #94a3b8; margin-bottom: 5px;">LIMITE PARA FASE (72H):</p>
+                <div id="cronometro">--:--:--</div>
+            </div>
+        </div>
+
+        <div id="area-amigos" class="hidden">
+            <h3 style="font-size:14px; margin-bottom:10px; color:#38bdf8">👥 MEUS AMIGOS</h3>
+            <div id="slot-amigo1" class="amigo-slot">
+                <div id="form-amigo1">
+                    <input type="text" id="amigo1-nome" placeholder="Nome do Amigo 1">
+                    <input type="tel" id="amigo1-num" placeholder="WhatsApp" style="margin-top:5px">
+                    <button class="btn" style="padding:8px; font-size:11px" onclick="cadastrarAmigo(1)">CADASTRAR</button>
+                </div>
+                <div id="info-amigo1" class="hidden"></div>
+            </div>
+            <div id="slot-amigo2" class="amigo-slot">
+                <div id="form-amigo2">
+                    <input type="text" id="amigo2-nome" placeholder="Nome do Amigo 2">
+                    <input type="tel" id="amigo2-num" placeholder="WhatsApp" style="margin-top:5px">
+                    <button class="btn" style="padding:8px; font-size:11px" onclick="cadastrarAmigo(2)">CADASTRAR</button>
+                </div>
+                <div id="info-amigo2" class="hidden"></div>
+            </div>
+        </div>
+        <button class="btn-link" onclick="logout()" style="color:var(--danger)">Sair da Conta</button>
+    </div>
+</div>
+
+<script>
+    let timerInterval;
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref') || 'direto';
+    document.getElementById('info-indicador').innerText = "Indicado por: " + (ref === 'direto' ? "ADMIN" : ref);
+
+    function alternarTela(id) {
+        document.querySelectorAll('.card > div:not(#prova-social)').forEach(div => div.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+    }
+
+    async function apiLogin() {
+        const num = document.getElementById('login-numero').value;
+        const senha = document.getElementById('login-senha').value;
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ numero: num, senha: senha })
+        });
+        const data = await res.json();
+        if(data.sucesso) {
+            localStorage.setItem('user_forja', num);
+            localStorage.setItem('pass_forja', senha);
+            montarPainel(data.dados);
+        } else alert("Dados incorretos ou usuário removido por tempo.");
+    }
+
+    function montarPainel(dados) {
+        alternarTela('sessao-painel');
+        document.getElementById('user-nome').innerText = dados.nome;
+        document.getElementById('user-fase').innerText = dados.fase;
+        const st = document.getElementById('user-status');
+
+        if(dados.status === 'ativo') {
+            st.innerText = "ATIVO ✅"; st.style.color = "#10b981";
+            document.getElementById('area-amigos').classList.remove('hidden');
+            document.getElementById('timer-box').classList.remove('hidden');
+            iniciarCronometro(dados.dataAtivacao);
+            renderizarAmigos(dados.convidados);
+            ativarProvaSocial(dados.fase);
+        } else {
+            st.innerText = "PENDENTE ⏳"; st.style.color = "#f59e0b";
+            document.getElementById('timer-box').classList.add('hidden');
         }
+    }
+
+    function ativarProvaSocial(fase) {
+        const nomes = ["Fabrí...", "João...", "Marc...", "Carl...", "Brun...", "Rich..."];
+        const nums = ["55199", "55119", "55219", "55419"];
+        const box = document.getElementById('prova-social');
         
-        function atualizarUI() {
-            document.getElementById('nome-user').textContent = dadosUsuario.nome;
-            document.getElementById('fase-atual').textContent = dadosUsuario.fase;
-            document.getElementById('saldo-valor').textContent = dadosUsuario.lucro;
-            
-            // Atualiza indicadores de fase
-            const fases = document.querySelectorAll('.fase');
-            fases.forEach((f, idx) => {
-                if (idx + 1 < dadosUsuario.fase) f.classList.add('completed');
-                if (idx + 1 === dadosUsuario.fase) f.classList.add('active');
-            });
-            
-            // Mostra painel correto
-            if (dadosUsuario.amigos.amigo_1 && dadosUsuario.amigos.amigo_2) {
-                document.getElementById('painel-amigos').classList.add('hidden');
-                document.getElementById('painel-fase').classList.remove('hidden');
-                
-                // Atualiza checkmarks
-                document.getElementById('check-a1').textContent = dadosUsuario.confirmacoes.amigo1 ? '✅' : '⏳';
-                document.getElementById('check-a2').textContent = dadosUsuario.confirmacoes.amigo2 ? '✅' : '⏳';
-                document.getElementById('check-admin').textContent = dadosUsuario.confirmacoes.admin ? '✅' : '⏳';
-                
-                // Desabilita botões já confirmados
-                if (dadosUsuario.confirmacoes.amigo1) {
-                    document.getElementById('btn-conf-a1').disabled = true;
-                    document.getElementById('btn-conf-a1').textContent = '✓ Amigo 1 Confirmado';
-                }
+        setInterval(() => {
+            const n = nomes[Math.floor(Math.random()*nomes.length)];
+            const num = nums[Math.floor(Math.random()*nums.length)];
+            box.innerText = `🔥 ${n} (${num}****) subiu para a FASE ${parseInt(fase)+1}!`;
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 5000);
+        }, 15000);
+    }
+
+    function iniciarCronometro(dataAtivacao) {
+        if (!dataAtivacao) return;
+        const fim = new Date(dataAtivacao).getTime() + (72 * 60 * 60 * 1000);
+        const display = document.getElementById('cronometro');
+        
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            const agora = new Date().getTime();
+            const dist = fim - agora;
+
+            if (dist < 0) {
+                clearInterval(timerInterval);
+                display.innerHTML = "EXPIRADO";
+                display.classList.add('piscando');
+                return;
             }
-        }
-        
-        function salvarAmigos() {
-            const nome1 = document.getElementById('amigo1-nome').value;
-            const num1 = document.getElementById('amigo1-num').value;
-            const nome2 = document.getElementById('amigo2-nome').value;
-            const num2 = document.getElementById('amigo2-num').value;
-            
-            if (!nome1 || !num1 || !nome2 || !num2) {
-                return alert('Preencha todos os dados');
+
+            const h = Math.floor(dist / (1000 * 60 * 60));
+            const m = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((dist % (1000 * 60)) / 1000);
+            display.innerHTML = `${h}h ${m}m ${s}s`;
+
+            if (dist < (24 * 60 * 60 * 1000)) display.classList.add('piscando');
+        }, 1000);
+    }
+
+    function renderizarAmigos(convidados) {
+        [1, 2].forEach(i => {
+            const amigo = convidados[i-1];
+            if(amigo) {
+                document.getElementById(`form-amigo${i}`).classList.add('hidden');
+                const info = document.getElementById(`info-amigo${i}`);
+                info.classList.remove('hidden');
+                info.innerHTML = `<p style="font-size:13px">${amigo.nome}</p>
+                    <span class="badge" style="background:${amigo.status==='ativo'?'#10b981':'#f59e0b'}">${amigo.status}</span>`;
             }
-            
-            dadosUsuario.amigos.amigo_1 = { nome: nome1, numero: num1 };
-            dadosUsuario.amigos.amigo_2 = { nome: nome2, numero: num2 };
-            dadosUsuario.status = 'ativo';
-            
-            alert('✅ Amigos cadastrados! Agora aguarde as doações.');
-            atualizarUI();
-        }
-        
-        function confirmar(tipo) {
-            if (tipo === 'amigo1') dadosUsuario.confirmacoes.amigo1 = true;
-            if (tipo === 'amigo2') dadosUsuario.confirmacoes.amigo2 = true;
-            
-            // Verifica se completou
-            if (dadosUsuario.confirmacoes.amigo1 && dadosUsuario.confirmacoes.amigo2) {
-                alert('✅ Você recebeu dos 2 amigos! Agora confirme a doação ao Admin.');
-            }
-            
-            atualizarUI();
-        }
-        
-        function confirmarDoacao() {
-            if (!dadosUsuario.confirmacoes.amigo1 || !dadosUsuario.confirmacoes.amigo2) {
-                return alert('Você precisa confirmar recebimento dos 2 amigos primeiro!');
-            }
-            
-            dadosUsuario.confirmacoes.admin = true;
-            dadosUsuario.lucro += 10;
-            
-            if (dadosUsuario.fase === 5) {
-                alert('🏆 PARABÉNS! Você completou todas as fases!');
-            } else {
-                dadosUsuario.fase++;
-                dadosUsuario.confirmacoes = { amigo1: false, amigo2: false, admin: false };
-                alert(`🚀 Avançou para Fase ${dadosUsuario.fase}!`);
-            }
-            
-            atualizarUI();
-        }
-        
-        // Registra Service Worker para funcionar como App (PWA)
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
-    </script>
+        });
+    }
+
+    async function apiCadastrar() {
+        const res = await fetch('/api/cadastrar', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                nome: document.getElementById('reg-nome').value,
+                numero: document.getElementById('reg-numero').value,
+                cpf: document.getElementById('reg-cpf').value,
+                indicadoPor: ref
+            })
+        });
+        const data = await res.json();
+        if(data.sucesso) { alert("Cadastrado! Use a senha enviada no seu WhatsApp."); alternarTela('sessao-login'); }
+        else alert(data.erro);
+    }
+
+    async function cadastrarAmigo(pos) {
+        const res = await fetch('/api/cadastrar', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                nome: document.getElementById(`amigo${pos}-nome`).value,
+                numero: document.getElementById(`amigo${pos}-num`).value,
+                cpf: 'OP_' + Math.floor(Math.random()*100000), 
+                indicadoPor: localStorage.getItem('user_forja')
+            })
+        });
+        const data = await res.json();
+        if(data.sucesso) { alert("Amigo Cadastrado!"); apiLogin(); }
+        else alert(data.erro);
+    }
+
+    function logout() { localStorage.clear(); location.reload(); }
+    window.onload = () => { if(localStorage.getItem('user_forja')) apiLogin(); }
+</script>
 </body>
 </html>

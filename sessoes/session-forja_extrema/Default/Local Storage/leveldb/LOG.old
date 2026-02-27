@@ -1,0 +1,6 @@
+2026/02/08-15:38:13.973 3ae0 Reusing MANIFEST C:\Users\fabri\forjando-milionarios\sessoes\session-forja_extrema\Default\Local Storage\leveldb/MANIFEST-000001
+2026/02/08-15:38:13.986 3ae0 Recovering log #3
+2026/02/08-15:38:13.993 3ae0 Reusing old log C:\Users\fabri\forjando-milionarios\sessoes\session-forja_extrema\Default\Local Storage\leveldb/000003.log 
+2026/02/08-18:01:08.524 3ae0 Level-0 table #5: started
+2026/02/08-18:01:08.553 3ae0 Level-0 table #5: 17470 bytes OK
+2026/02/08-18:01:08.562 3ae0 Delete type=0 #3

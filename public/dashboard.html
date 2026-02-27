@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Controle | Forja Extrema</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #FFD700;
+            --dark-bg: #050505;
+            --card-bg: #111;
+            --neon-green: #00ff88;
+            --danger: #ff4444;
+        }
+
+        body { background-color: var(--dark-bg); color: white; font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        
+        .header { text-align: center; padding: 20px 0; }
+        .welcome { font-size: 2rem; font-weight: 900; margin-top: 5px; background: linear-gradient(to right, #fff, var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .pagamento-alerta {
+            background: linear-gradient(145deg, #200, #000);
+            border: 2px solid var(--danger);
+            border-radius: 20px; padding: 25px; margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+            animation: pulse 2s infinite; display: none;
+        }
+        .pix-box { background: #000; padding: 20px; border-radius: 12px; border: 1px solid var(--gold); margin: 15px 0; text-align: center;}
+        .pix-valor { font-size: 2.5rem; font-weight: 900; color: var(--gold); display: block; }
+
+        .status-card { background: var(--card-bg); border-radius: 20px; padding: 30px; border: 1px solid #222; text-align: center; margin-bottom: 20px; }
+        .progress-container { height: 12px; background: #222; border-radius: 10px; margin: 20px 0; }
+        .progress-bar { height: 100%; background: linear-gradient(to right, #B8860B, var(--gold)); border-radius: 10px; width: 0%; box-shadow: 0 0 15px var(--gold); transition: width 2s ease; }
+
+        .table-container { overflow-x: auto; background: #111; border-radius: 20px; border: 1px solid #222; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 15px; border-bottom: 1px solid #222; font-size: 0.85rem; }
+        th { background: #1a1a1a; color: var(--gold); }
+        .row-active { background: rgba(0, 255, 136, 0.1); }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.01); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>PROJETO FORJA EXTREMA</h1>
+        <div class="welcome" id="nomeUsuario">Carregando...</div>
+    </div>
+
+    <div id="cardPagamento" class="pagamento-alerta">
+        <h3>🚨 AÇÃO NECESSÁRIA</h3>
+        <p>Realize sua doação para subir de nível:</p>
+        <div class="pix-box">
+            <span class="pix-valor" id="valorFase">R$ 10,00</span>
+            <p>Recebedor: <strong id="nomePai">---</strong></p>
+            <p>Chave PIX: <strong id="chavePai">---</strong></p>
+        </div>
+        <button style="background: var(--gold); padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor:pointer;" onclick="copiarPix()">COPIAR CHAVE PIX</button>
+        
+        <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.75rem; color: #aaa; text-align: justify; border: 1px solid #333;">
+            <strong>💡 AVISO DE LIBERDADE:</strong> 
+            Você tem total autonomia. A progressão para esta fase é 100% voluntária. 
+            Se optar por não realizar a doação, sua conta permanecerá no status atual e você não poderá receber novas doações, 
+            abdicando da meta final de R$ 1 Milhão.
+        </div>
+    </div>
+
+    <div class="status-card">
+        <div id="labelFase" class="phase-badge">Fase --</div>
+        <div class="progress-container"><div class="progress-bar" id="barraProgresso"></div></div>
+        <div id="linkArea" style="display:none;">
+            <p style="font-size: 0.8rem; color: #888;">SEU LINK DE CONVITE:</p>
+            <code id="linkConvite" style="color: var(--neon-green); word-break: break-all;">---</code>
+            <button onclick="copiarLink()" style="display:block; width:100%; margin-top:10px; padding:10px; cursor:pointer;">COPIAR LINK</button>
+        </div>
+    </div>
+
+    <h3>📊 PLANO DE CARREIRA</h3>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Fase</th>
+                    <th>Doação</th>
+                    <th>Recebe</th>
+                    <th>Lucro</th>
+                </tr>
+            </thead>
+            <tbody id="corpoTabela"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const fasesConfig = [];
+    for(let i = 1; i <= 29; i++) {
+        let doacao = i === 1 ? 10 : (i === 2 ? 50 : (i * 100) - 100);
+        let bruto = doacao * 2; 
+        fasesConfig.push({ fase: i, doacao: doacao, bruto: bruto, lucro: bruto * 0.5 });
+    }
+
+    function carregarDashboard() {
+        const dados = JSON.parse(sessionStorage.getItem('usuario'));
+        if(!dados) return window.location.href = "/login.html";
+
+        document.getElementById('nomeUsuario').innerText = `Olá, ${dados.nome}!`;
+        document.getElementById('labelFase').innerText = `Fase ${dados.fase} de 29`;
+        
+        const valorNecessario = fasesConfig[dados.fase - 1]?.doacao || 0;
+        document.getElementById('valorFase').innerText = `R$ ${valorNecessario},00`;
+
+        if(dados.status === 'ativo') {
+            document.getElementById('linkArea').style.display = 'block';
+            document.getElementById('linkConvite').innerText = dados.link;
+            document.getElementById('cardPagamento').style.display = 'none';
+        } else {
+            document.getElementById('cardPagamento').style.display = 'block';
+            document.getElementById('nomePai').innerText = dados.indicadorNome;
+            document.getElementById('chavePai').innerText = dados.indicadorPix;
+        }
+
+        setTimeout(() => {
+            document.getElementById('barraProgresso').style.width = (dados.fase / 29 * 100) + "%";
+        }, 500);
+
+        renderizarTabela(dados.fase);
+    }
+
+    function renderizarTabela(faseAtual) {
+        const corpo = document.getElementById('corpoTabela');
+        const limite = Math.max(11, faseAtual + 2);
+        fasesConfig.forEach(f => {
+            if(f.fase > limite) return;
+            const tr = document.createElement('tr');
+            if(f.fase === faseAtual) tr.className = "row-active";
+            tr.innerHTML = `<td>${f.fase}º</td><td>R$ ${f.doacao}</td><td>R$ ${f.bruto}</td><td style="color:var(--neon-green)">R$ ${f.lucro}</td>`;
+            corpo.appendChild(tr);
+        });
+    }
+
+    function copiarPix() {
+        navigator.clipboard.writeText(document.getElementById('chavePai').innerText);
+        alert("Chave PIX copiada!");
+    }
+
+    window.onload = carregarDashboard;
+</script>
+</body>
+</html>

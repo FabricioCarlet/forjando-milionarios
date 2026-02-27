@@ -1,0 +1,51 @@
+2026/02/09-19:38:46.357 4e68 Reusing MANIFEST C:\Users\fabri\forjando-milionarios\sessoes\session-forja_extrema\Default\Local Storage\leveldb/MANIFEST-000001
+2026/02/09-19:38:46.363 4e68 Recovering log #4
+2026/02/09-19:38:46.366 4e68 Reusing old log C:\Users\fabri\forjando-milionarios\sessoes\session-forja_extrema\Default\Local Storage\leveldb/000004.log 
+2026/02/10-01:40:32.813 3fd4 Level-0 table #8: started
+2026/02/10-01:40:32.837 3fd4 Level-0 table #8: 17374 bytes OK
+2026/02/10-01:40:32.845 3fd4 Delete type=0 #4
+2026/02/10-12:28:31.044 3fd4 Level-0 table #10: started
+2026/02/10-12:28:31.060 3fd4 Level-0 table #10: 13246 bytes OK
+2026/02/10-12:28:31.066 3fd4 Delete type=0 #7
+2026/02/11-08:47:38.681 3fd4 Level-0 table #12: started
+2026/02/11-08:47:38.734 3fd4 Level-0 table #12: 15347 bytes OK
+2026/02/11-08:47:38.744 3fd4 Delete type=0 #9
+2026/02/11-10:47:15.838 4e68 Level-0 table #14: started
+2026/02/11-10:47:15.871 4e68 Level-0 table #14: 15159 bytes OK
+2026/02/11-10:47:15.877 4e68 Delete type=0 #11
+2026/02/11-14:14:40.818 4e68 Level-0 table #16: started
+2026/02/11-14:14:40.849 4e68 Level-0 table #16: 13903 bytes OK
+2026/02/11-14:14:40.856 4e68 Delete type=0 #13
+2026/02/11-14:14:40.860 4e68 Compacting 4@0 + 1@1 files
+2026/02/11-14:14:40.874 4e68 Generated table #17@0: 79 keys, 8649 bytes
+2026/02/11-14:14:40.875 4e68 Compacted 4@0 + 1@1 files => 8649 bytes
+2026/02/11-14:14:40.876 4e68 compacted to: files[ 0 1 1 0 0 0 0 ]
+2026/02/11-14:14:40.879 4e68 Delete type=2 #8
+2026/02/11-14:14:40.879 4e68 Delete type=2 #10
+2026/02/11-14:14:40.879 4e68 Delete type=2 #12
+2026/02/11-14:14:40.880 4e68 Delete type=2 #14
+2026/02/11-14:14:40.880 4e68 Delete type=2 #16
+2026/02/12-19:36:27.638 4e68 Level-0 table #19: started
+2026/02/12-19:36:27.654 4e68 Level-0 table #19: 15255 bytes OK
+2026/02/12-19:36:27.657 4e68 Delete type=0 #15
+2026/02/15-19:21:05.505 3fd4 Level-0 table #21: started
+2026/02/15-19:21:05.532 3fd4 Level-0 table #21: 14312 bytes OK
+2026/02/15-19:21:05.541 3fd4 Delete type=0 #18
+2026/02/16-21:38:24.847 4e68 Level-0 table #23: started
+2026/02/16-21:38:24.878 4e68 Level-0 table #23: 16558 bytes OK
+2026/02/16-21:38:24.889 4e68 Delete type=0 #20
+2026/02/20-22:22:14.238 4e68 Level-0 table #25: started
+2026/02/20-22:22:14.279 4e68 Level-0 table #25: 15523 bytes OK
+2026/02/20-22:22:14.309 4e68 Delete type=0 #22
+2026/02/20-22:22:14.319 4e68 Compacting 4@0 + 1@1 files
+2026/02/20-22:22:14.343 4e68 Generated table #26@0: 98 keys, 9491 bytes
+2026/02/20-22:22:14.343 4e68 Compacted 4@0 + 1@1 files => 9491 bytes
+2026/02/20-22:22:14.344 4e68 compacted to: files[ 0 1 1 0 0 0 0 ]
+2026/02/20-22:22:14.350 4e68 Delete type=2 #17
+2026/02/20-22:22:14.358 4e68 Delete type=2 #19
+2026/02/20-22:22:14.358 4e68 Delete type=2 #21
+2026/02/20-22:22:14.361 4e68 Delete type=2 #23
+2026/02/20-22:22:14.361 4e68 Delete type=2 #25
+2026/02/22-14:24:11.260 3fd4 Level-0 table #28: started
+2026/02/22-14:24:11.653 3fd4 Level-0 table #28: 16098 bytes OK
+2026/02/22-14:24:11.819 3fd4 Delete type=0 #24

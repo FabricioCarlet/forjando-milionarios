@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forjando Milionários | Acesso Exclusivo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #FFD700;
+            --gold-glow: rgba(255, 215, 0, 0.5);
+            --dark: #0a0a0a;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+        }
+
+        /* Efeito de Partículas ao fundo via CSS */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+            opacity: 0.2;
+            animation: move 100s linear infinite;
+        }
+
+        @keyframes move { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+
+        .login-card {
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            box-shadow: 0 0 50px rgba(0,0,0,1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            animation: fadeIn 1s ease-out;
+        }
+
+        h1 {
+            font-weight: 900;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #fff, var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        p { color: #888; font-size: 0.9rem; margin-bottom: 30px; }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            background: #151515;
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 15px var(--gold-glow);
+            outline: none;
+            background: #1a1a1a;
+        }
+
+        button {
+            width: 100%;
+            background: linear-gradient(45deg, #B8860B, var(--gold));
+            color: black;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 900;
+            font-size: 1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--gold);
+        }
+
+        #mensagem {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            min-height: 20px;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <h1>FORJANDO<br>MILIONÁRIOS</h1>
+        <p>A elite do sucesso começa aqui.</p>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <label>Login (WhatsApp)</label>
+                <input type="text" id="numero" placeholder="Ex: 55199..." required>
+            </div>
+            <div class="input-group">
+                <label>Senha Secreta</label>
+                <input type="password" id="senha" placeholder="••••••" required>
+            </div>
+            <button type="submit">Acessar Império</button>
+        </form>
+
+        <div id="mensagem"></div>
+    </div>
+
+    <script>
+    document.getElementById('loginForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        const msg = document.getElementById('mensagem');
+        
+        btn.innerText = "VERIFICANDO...";
+        btn.style.opacity = "0.5";
+
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    numero: document.getElementById('numero').value,
+                    senha: document.getElementById('senha').value
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.sucesso) {
+                sessionStorage.setItem('usuario', JSON.stringify(data.dados));
+                msg.style.color = "#00ff00";
+                msg.innerText = "ACESSO PERMITIDO! REDIRECIONANDO...";
+                setTimeout(() => window.location.href = "/dashboard.html", 1500);
+            } else {
+                throw new Error(data.erro || "Falha no acesso");
+            }
+        } catch (err) {
+            btn.innerText = "ACESSAR IMPÉRIO";
+            btn.style.opacity = "1";
+            msg.style.color = "#ff4444";
+            msg.innerText = err.message;
+        }
+    };
+</script>
+</body>
+</html>
