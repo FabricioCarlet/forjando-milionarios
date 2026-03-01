@@ -46,14 +46,37 @@ input:focus { border-color: var(--primary); }
     <div id="prova-social"></div>
 
     <div id="sessao-cadastro">
-        <h1>👑 Cadastre-se</h1>
-        <p id="info-indicador" style="text-align:center; font-size:11px; margin-bottom:15px; color:#38bdf8"></p>
-        <div class="input-group"><label>NOME COMPLETO</label><input type="text" id="reg-nome"></div>
-        <div class="input-group"><label>WHATSAPP</label><input type="tel" id="reg-numero" placeholder="19982020202"></div>
-        <div class="input-group"><label>CPF</label><input type="text" id="reg-cpf" maxlength="11"></div>
-        <button class="btn" onclick="apiCadastrar()">CRIAR MINHA CONTA</button>
-        <button class="btn-link" onclick="alternarTela('sessao-login')">Já sou cadastrado? Entrar</button>
+    <h1>⚜️ FORJA EXTREMA</h1>
+    <p style="text-align:center; color: var(--primary); font-size: 14px; margin-bottom: 10px; font-weight: bold;">
+        O CAMINHO PARA O SEU PRIMEIRO MILHÃO COMEÇA AQUI.
+    </p>
+    <p id="info-indicador" style="text-align:center; font-size:11px; margin-bottom:15px; color:#aaa"></p>
+    
+    <div class="input-group">
+        <label>NOME COMPLETO (Sua Identidade na Forja)</label>
+        <input type="text" id="reg-nome" placeholder="Ex: Fabricio Carlet">
     </div>
+    
+    <div class="input-group">
+        <label>WHATSAPP (Onde você receberá seus lucros)</label>
+        <input type="tel" id="reg-numero" placeholder="19982020202">
+    </div>
+    
+    <div class="input-group">
+        <label>CPF (Para segurança do seu acesso)</label>
+        <input type="text" id="reg-cpf" maxlength="11" placeholder="Somente números">
+    </div>
+    
+    <button class="btn" onclick="apiCadastrar()" style="font-size: 16px; letter-spacing: 1px;">
+        QUERO ME TORNAR MILIONÁRIO 🚀
+    </button>
+    
+    <p style="font-size: 10px; color: #666; text-align: center; margin-top: 10px;">
+        *Ao entrar, você concorda com as regras de ajuda mútua e o prazo de 72h.
+    </p>
+    
+    <button class="btn-link" onclick="alternarTela('sessao-login')">Já faz parte da elite? Entrar</button>
+</div>
 
     <div id="sessao-login" class="hidden">
         <h1>🔐 Entrar</h1>

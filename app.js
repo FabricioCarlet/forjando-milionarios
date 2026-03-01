@@ -167,8 +167,12 @@ app.post('/api/admin/avisar', authAdmin, async (req, res) => {
 });
 
 app.post('/api/admin/reset', authAdmin, async (req, res) => {
-    await db.resetarBancoTotal();
-    res.json({ sucesso: true });
+    try {
+        await db.resetarBancoTotal(); // Certifique-se que esta função existe no seu db.js
+        res.json({ sucesso: true });
+    } catch (err) {
+        res.status(500).json({ sucesso: false, erro: err.message });
+    }
 });
 
 // ROTAS PUBLICAS
