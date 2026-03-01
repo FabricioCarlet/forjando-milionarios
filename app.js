@@ -14,19 +14,21 @@ app.use(express.static('public'));
 const client = new Client({
     authStrategy: new LocalAuth({ clientId: "forja_extrema", dataPath: './sessoes' }), 
     puppeteer: { 
-        headless: true, 
-        // Esta linha permite que o Render use o navegador instalado no servidor
+        headless: true,
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome-stable',
+        // ESTES ARGUMENTOS SÃO VITAIS PARA O RENDER:
         args: [
             '--no-sandbox', 
             '--disable-setuid-sandbox', 
             '--disable-dev-shm-usage', 
-            '--disable-accelerated-2d-canvas', 
-            '--no-first-run', 
-            '--no-zygote', 
-            '--single-process', 
-            '--disable-gpu'
-        ] 
-    }
+            '--single-process', // Ajuda a economizar memória no plano Free
+            '--no-zygote'
+        ],
+        handleSIGINT: false, // Evita que o Render feche o processo por engano
+        handleSIGTERM: false
+    },
+    qrMaxRetries: 10, // Tenta gerar o QR Code mais vezes se falhar
+    authTimeoutMs: 60000 // Aumenta o tempo de espera para 1 minuto
 });
 
 const limpar = (n) => n ? n.replace(/\D/g, '') : '';
