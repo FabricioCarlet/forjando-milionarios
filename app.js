@@ -55,7 +55,7 @@ async function enviarWhatsApp(numero, mensagem) {
 
 // LOGICA DE VARREDURA 72H
 async function executarVarredura72h() {
-    console.log("⚙️ Varredura Automática em execução...");
+    console.log("⚙️ Varredura de Regras em execução...");
     try {
         const agora = new Date();
         const participantes = await db.listarTudo();
@@ -65,20 +65,44 @@ async function executarVarredura72h() {
             if (u.status !== 'ativo' || !u.dataAtivacao) continue;
             
             const diffHoras = (agora - new Date(u.dataAtivacao)) / (1000 * 60 * 60);
-            
+            const amigosAtivos = await db.collection.countDocuments({ indicadoPor: u.numero, status: 'ativo' });
+
+            // Se o usuário já completou o ciclo (2 amigos), ele está seguro nesta fase
+            if (amigosAtivos >= 2) continue;
+
+            // REGRA 72H: EXCLUSÃO AUTOMÁTICA
             if (diffHoras >= 72) {
-                await enviarWhatsApp(u.numero, "⚠️ *TEMPO ESGOTADO!*\nSua conta foi removida por inatividade no ciclo.");
+                await enviarWhatsApp(u.numero, "💀 *TEMPO ESGOTADO!*\nInfelizmente você não cumpriu o ciclo de 72h e sua conta foi removida. Seus indicados agora pertencem ao Admin.");
                 await db.adotarOrfaos(u.numero.split('@')[0], numeroAdmin);
                 await db.removerPorExpiracao(u.numero);
-                console.log(`💀 Removido: ${u.numero}`);
-            } else if (diffHoras >= 48 && diffHoras < 49) {
-                const amigosAtivos = await db.collection.countDocuments({ indicadoPor: u.numero, status: 'ativo' });
-                if (amigosAtivos < 2) {
-                    await enviarWhatsApp(u.numero, `⚠️ *AVISO CRÍTICO:* Restam menos de 24h para completar seu ciclo!`);
-                }
+                console.log(`💀 Usuário Removido: ${u.numero}`);
+            } 
+            // REGRA 70H: ALERTA VERMELHO (2 HORAS RESTANTES)
+            // REGRA 72H: EXCLUSÃO DEFINITIVA
+            if (diffHoras >= 72) {
+                await enviarWhatsApp(u.numero, "💀 *TEMPO ESGOTADO!*\nInfelizmente você não cumpriu o ciclo de 72h e sua conta foi removida. Seus indicados agora pertencem ao Admin.");
+                await db.adotarOrfaos(u.numero.split('@')[0], numeroAdmin);
+                await db.removerPorExpiracao(u.numero);
+                console.log(`💀 Usuário Removido: ${u.numero}`);
+            } 
+            
+            // REGRA 70H: MENSAGEM VERMELHA (O ÚLTIMO AVISO PERSUASIVO)
+            else if (diffHoras >= 70 && diffHoras < 71) {
+                const msg70h = `🚨 *AVISO DE EXCLUSÃO IMINENTE* 🚨\n\nOlá, *${u.nome}*!\nEste é o seu **último contato** antes da remoção definitiva.\n\n⏰ *VOCÊ TEM APENAS 120 MINUTOS!*\n\nAs regras foram claras e o seu tempo está acabando. Se não agir agora:\n1. Sua conta será **DELETADA** permanentemente.\n2. Você perderá sua posição rumo ao milhão.\n3. Seus indicados passarão a pertencer ao Admin.\n\n👉 *CADASTRE SEUS 2 AMIGOS AGORA!*`;
+                await enviarWhatsApp(u.numero, msg70h);
+            }
+
+            // REGRA 48H: SEGUNDA ADVERTÊNCIA (AVISO AMARELO)
+            else if (diffHoras >= 48 && diffHoras < 49) {
+                await enviarWhatsApp(u.numero, "⚠️ *SEGUNDA ADVERTÊNCIA:* \nJá se passaram 48h. Você ainda precisa de 2 amigos ativos para garantir sua vaga no Forjando Milionários! Não pare agora.");
+            }
+
+            // REGRA 24H: PRIMEIRA ADVERTÊNCIA (AVISO AMARELO)
+            else if (diffHoras >= 24 && diffHoras < 25) {
+                await enviarWhatsApp(u.numero, "🟡 *PRIMEIRA ADVERTÊNCIA:* \nSeu prazo de 24h inicial venceu. Complete seu ciclo (2 amigos) para avançar para a próxima fase!");
             }
         }
-    } catch (err) { console.error("Erro na varredura:", err); }
+    } catch (err) { console.error("Erro na varredura detalhada:", err); }
 }
 
 async function verificarEPromoverPai(idPai) {
@@ -171,9 +195,13 @@ async function iniciarServidor() {
     try {
         await db.conectar();
         const PORTA = process.env.PORT || 3000;
+        // Primeiro o site fica online
         app.listen(PORTA, () => { 
-            console.log(`🚀 Servidor Rodando em http://localhost:${PORTA}`);
-            client.initialize(); 
+            console.log(`🚀 Site Online em http://localhost:${PORTA}`);
+            
+            // O WhatsApp só tenta ligar SE não estivermos no Render (ambiente de produção)
+            // Ou você pode comentar a linha abaixo para testar o site primeiro
+            // client.initialize(); 
         });
     } catch (err) { console.error("Erro ao iniciar:", err); }
 }
