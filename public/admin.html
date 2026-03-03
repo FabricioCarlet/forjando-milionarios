@@ -9,26 +9,28 @@
         body { background: var(--bg); color: var(--text); display: flex; }
         
         .sidebar { width: 250px; background: var(--card); height: 100vh; padding: 20px; border-right: 2px solid var(--primary); position: fixed; }
-        .sidebar h2 { color: var(--primary); margin-bottom: 30px; text-align: center; letter-spacing: 2px; }
+        .sidebar h2 { color: var(--primary); margin-bottom: 20px; text-align: center; letter-spacing: 2px; }
+        
+        /* BÔNUS IA */
+        .bonus-ia { background: linear-gradient(45deg, #111, #D4AF37); color: #000; padding: 15px; border-radius: 12px; margin-bottom: 20px; font-weight: bold; border: 1px solid #D4AF37; text-align: center; font-size: 14px; }
+
         .nav-btn { width: 100%; padding: 12px; background: transparent; border: 1px solid transparent; color: var(--text); text-align: left; cursor: pointer; border-radius: 8px; margin-bottom: 10px; transition: 0.3s; }
         .nav-btn:hover { border-color: var(--primary); color: var(--primary); }
 
         .main { margin-left: 250px; padding: 40px; width: calc(100% - 250px); }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
-        .stat-card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--primary); text-align: center; box-shadow: 0 0 10px rgba(212, 175, 55, 0.1); }
-        .stat-card p { font-size: 28px; color: var(--primary); font-weight: bold; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .stat-card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--primary); text-align: center; }
+        .stat-card p { font-size: 24px; color: var(--primary); font-weight: bold; }
 
         table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid #333; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #333; font-size: 13px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; font-size: 13px; }
         th { background: #111; color: var(--primary); text-transform: uppercase; }
         
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
         .badge-pendente { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
         .badge-ativo { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-        .tempo-alerta { color: var(--danger); font-weight: bold; animation: blink 1s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
-        .btn-action { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; margin-right: 5px; font-weight: bold; }
+        
+        .btn-action { padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: bold; margin-right: 2px; }
         .btn-activate { background: var(--primary); color: black; }
         .btn-reset { background: var(--danger); color: white; }
     </style>
@@ -36,17 +38,20 @@
 <body>
 
 <div class="sidebar">
-    <h2>⚜️ FORJA ADMIN</h2>
+    <h2>⚜️ ADMIN</h2>
+    <div class="bonus-ia">
+        🤖 BÔNUS UPGRADE IA<br>
+        R$ <span id="valor-ia">0,00</span>
+    </div>
     <button class="nav-btn" onclick="carregarDados()">🔄 Atualizar Lista</button>
-    <button class="nav-btn" onclick="openBroadcast()">📢 Aviso Geral</button>
     <button class="nav-btn" onclick="resetSistema()" style="color: var(--danger);">⚠️ Reset Total</button>
 </div>
 
 <div class="main">
     <div class="stats-grid">
-        <div class="stat-card"><h3>Membros</h3><p id="stat-total">0</p></div>
+        <div class="stat-card"><h3>Arrecadação</h3><p id="total-arrecadado">R$ 0</p></div>
         <div class="stat-card"><h3>Ativos</h3><p id="stat-ativos">0</p></div>
-        <div class="stat-card"><h3>Prazos Críticos</h3><p id="stat-criticos" style="color: var(--danger)">0</p></div>
+        <div class="stat-card"><h3>Total</h3><p id="stat-total">0</p></div>
     </div>
 
     <table>
@@ -54,9 +59,9 @@
             <tr>
                 <th>Nome</th>
                 <th>WhatsApp</th>
+                <th>Senha</th>
                 <th>Status</th>
-                <th>Progresso</th>
-                <th>Tempo Restante</th>
+                <th>Rede</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -65,14 +70,13 @@
 </div>
 
 <script>
-    // OPÇÃO 2 SOLICITADA: Senha por Prompt
-    const senhaMestra = prompt("⚜️ ACESSO RESTRITO\nDigite a Senha Mestra do Sistema:");
+    const senhaMestra = prompt("⚜️ ACESSO RESTRITO\nDigite a Senha Mestra:");
     const ADMIN_AUTH = { 'x-admin-pass': senhaMestra };
 
     async function carregarDados() {
         try {
             const res = await fetch('/api/admin/listar', { headers: ADMIN_AUTH });
-            if (!res.ok) { alert("Senha Inválida!"); location.reload(); return; }
+            if (!res.ok) { alert("Acesso Negado!"); location.reload(); return; }
             const dados = await res.json();
             renderizar(dados);
         } catch (err) { console.error(err); }
@@ -81,42 +85,37 @@
     function renderizar(usuarios) {
         const corpo = document.getElementById('lista-usuarios');
         corpo.innerHTML = "";
-        let criticos = 0;
+        
+        let ativos = usuarios.filter(u => u.status === 'ativo').length;
+        let totalVal = ativos * 20; // Simulação de R$ 20 por ativação
+        let bonusIA = Math.floor(totalVal / 10000) * 100;
+
+        document.getElementById('total-arrecadado').innerText = "R$ " + totalVal.toLocaleString();
+        document.getElementById('valor-ia').innerText = bonusIA.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+        document.getElementById('stat-ativos').innerText = ativos;
+        document.getElementById('stat-total').innerText = usuarios.length;
 
         usuarios.forEach(u => {
             const numLimpo = u.numero.split('@')[0];
-            const filhos = usuarios.filter(f => f.indicadoPor.includes(numLimpo)).length;
-            
-            // Lógica do Log de Expulsão (Tempo Restante)
-            let tempoTxt = "---";
-            let classeTempo = "";
-            if(u.status === 'ativo' && u.dataAtivacao && filhos < 2) {
-                const fim = new Date(u.dataAtivacao).getTime() + (72 * 60 * 60 * 1000);
-                const resto = (fim - new Date().getTime()) / (1000 * 60 * 60);
-                tempoTxt = resto > 0 ? resto.toFixed(1) + "h" : "EXPIRADO";
-                if(resto < 10) { classeTempo = "tempo-alerta"; criticos++; }
-            }
+            const filhos = usuarios.filter(f => f.indicadoPor === u.numero).length;
 
             corpo.innerHTML += `
                 <tr>
                     <td><b>${u.nome}</b></td>
                     <td>${numLimpo}</td>
-                    <td><span class="badge badge-${u.status}">${u.status}</span></td>
-                    <td>${filhos}/2 amigos</td>
-                    <td class="${classeTempo}">${tempoTxt}</td>
+                    <td style="color: var(--primary); font-weight: bold;">${u.senha || '---'}</td>
+                    <td><span class="badge badge-${u.status}">${u.status.toUpperCase()}</span></td>
+                    <td>${filhos}/2</td>
                     <td>
-                        <button class="btn-action btn-activate" onclick="acaoAtivar('${numLimpo}')">ATIVAR</button>
-                        <button class="btn-action btn-reset" onclick="acaoRemover('${numLimpo}')">BANIR</button>
+                        <button class="btn-action btn-activate" onclick="acaoAtivar('${u.numero}')">ATIVAR</button>
                     </td>
                 </tr>
             `;
         });
-        document.getElementById('stat-total').innerText = usuarios.length;
-        document.getElementById('stat-criticos').innerText = criticos;
     }
 
     async function acaoAtivar(num) {
-        if(confirm(`Confirmar Ativação de ${num}?`)) {
+        if(confirm(`Ativar usuário ${num}?`)) {
             await fetch('/api/admin/status', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', ...ADMIN_AUTH },
@@ -125,6 +124,17 @@
             carregarDados();
         }
     }
+
+    async function resetSistema() {
+        if(confirm("⚠️ ATENÇÃO: Deseja apagar todos os usuários (exceto Admin)?")) {
+            const res = await fetch('/api/admin/reset', { method: 'POST', headers: ADMIN_AUTH });
+            if(res.ok) {
+                alert("Sistema resetado com sucesso!");
+                carregarDados();
+            }
+        }
+    }
+
     carregarDados();
 </script>
 </body>
