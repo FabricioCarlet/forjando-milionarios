@@ -81,7 +81,7 @@ input:focus { border-color: var(--primary); }
             Já faz parte da elite? Entrar agora
         </button>
     </div>
-    
+
     </div>
         <div id="sessao-login" class="hidden">
         <h1>🔐 Entrar</h1>
@@ -134,24 +134,41 @@ input:focus { border-color: var(--primary); }
     document.getElementById('info-indicador').innerText = "Indicado por: " + (ref === 'direto' ? "ADMIN" : ref);
 
     function alternarTela(id) {
-        document.querySelectorAll('.card > div:not(#prova-social)').forEach(div => div.classList.add('hidden'));
+        document.getElementById('sessao-cadastro').classList.add('hidden');
+        document.getElementById('sessao-login').classList.add('hidden');
+        document.getElementById('sessao-painel').classList.add('hidden');
         document.getElementById(id).classList.remove('hidden');
     }
 
     async function apiLogin() {
-        const num = document.getElementById('login-numero').value;
-        const senha = document.getElementById('login-senha').value;
-        const res = await fetch('/api/login', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ numero: num, senha: senha })
-        });
-        const data = await res.json();
-        if(data.sucesso) {
-            localStorage.setItem('user_forja', num);
-            localStorage.setItem('pass_forja', senha);
-            montarPainel(data.dados);
-        } else alert("Dados incorretos ou usuário removido por tempo.");
+        const numInput = document.getElementById('login-numero').value;
+        const senhaInput = document.getElementById('login-senha').value;
+        
+        // Se o valor vier do localStorage, já estará limpo, se não, limpamos agora
+        const num = numInput.includes('@c.us') ? numInput : numInput.replace(/\D/g, '') + '@c.us';
+        const senha = senhaInput || localStorage.getItem('pass_forja');
+
+        if(!num || !senha) return;
+
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ numero: num, senha: senha })
+            });
+            const data = await res.json();
+            if(data.sucesso) {
+                localStorage.setItem('user_forja', num);
+                localStorage.setItem('pass_forja', senha);
+                montarPainel(data.dados);
+            } else {
+                if(!senhaInput) { // Se falhou no login automático
+                    localStorage.clear();
+                } else {
+                    alert("Dados incorretos ou usuário removido por tempo.");
+                }
+            }
+        } catch(e) { console.error("Erro login:", e); }
     }
 
     function montarPainel(dados) {
@@ -165,11 +182,11 @@ input:focus { border-color: var(--primary); }
             document.getElementById('area-amigos').classList.remove('hidden');
             document.getElementById('timer-box').classList.remove('hidden');
             iniciarCronometro(dados.dataAtivacao);
-            renderizarAmigos(dados.convidados);
-            ativarProvaSocial(dados.fase);
+            renderizarAmigos(dados.convidados || []);
         } else {
             st.innerText = "PENDENTE ⏳"; st.style.color = "#f59e0b";
             document.getElementById('timer-box').classList.add('hidden');
+            document.getElementById('area-amigos').classList.add('hidden');
         }
     }
 
@@ -259,7 +276,13 @@ input:focus { border-color: var(--primary); }
     }
 
     function logout() { localStorage.clear(); location.reload(); }
-    window.onload = () => { if(localStorage.getItem('user_forja')) apiLogin(); }
+    window.onload = () => {
+        const salvo = localStorage.getItem('user_forja');
+        if(salvo) {
+            document.getElementById('login-numero').value = salvo;
+            apiLogin();
+        }
+    }
 </script>
 </body>
 </html>
