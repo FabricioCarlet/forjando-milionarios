@@ -46,39 +46,44 @@ input:focus { border-color: var(--primary); }
     <div id="prova-social"></div>
 
     <div id="sessao-cadastro">
-    <h1>⚜️ FORJA EXTREMA</h1>
-    <p style="text-align:center; color: var(--primary); font-size: 14px; margin-bottom: 10px; font-weight: bold;">
-        O CAMINHO PARA O SEU PRIMEIRO MILHÃO COMEÇA AQUI.
-    </p>
-    <p id="info-indicador" style="text-align:center; font-size:11px; margin-bottom:15px; color:#aaa"></p>
-    
-    <div class="input-group">
-        <label>NOME COMPLETO (Sua Identidade na Forja)</label>
-        <input type="text" id="reg-nome" placeholder="Ex: Fabricio Carlet">
-    </div>
-    
-    <div class="input-group">
-        <label>WHATSAPP (Onde você receberá seus lucros)</label>
-        <input type="tel" id="reg-numero" placeholder="19982020202">
-    </div>
-    
-    <div class="input-group">
-        <label>CPF (Para segurança do seu acesso)</label>
-        <input type="text" id="reg-cpf" maxlength="11" placeholder="Somente números">
-    </div>
-    
-    <button class="btn" onclick="apiCadastrar()" style="font-size: 16px; letter-spacing: 1px;">
-        QUERO ME TORNAR MILIONÁRIO 🚀
-    </button>
-    
-    <p style="font-size: 10px; color: #666; text-align: center; margin-top: 10px;">
-        *Ao entrar, você concorda com as regras de ajuda mútua e o prazo de 72h.
-    </p>
-    
-    <button class="btn-link" onclick="alternarTela('sessao-login')">Já faz parte da elite? Entrar</button>
-</div>
+        <h1 style="font-size: 32px; margin-bottom: 5px;">👑 FORJA EXTREMA</h1>
+        <p style="text-align:center; color: var(--primary); font-weight: bold; margin-bottom: 20px;">
+            TRANSFORME R$ 20,00 EM LIBERDADE FINANCEIRA.
+        </p>
+        
+        <p id="info-indicador" style="text-align:center; font-size:11px; margin-bottom:15px; color:#666"></p>
+        
+        <div class="input-group">
+            <label>NOME COMPLETO (Seu nome na lista da elite)</label>
+            <input type="text" id="reg-nome" placeholder="Digite seu nome completo">
+        </div>
+        
+        <div class="input-group">
+            <label>WHATSAPP (Onde a mágica acontece)</label>
+            <input type="tel" id="reg-numero" placeholder="Ex: 19982020202">
+        </div>
+        
+        <div class="input-group">
+            <label>CPF (Para validar sua posição única)</label>
+            <input type="text" id="reg-cpf" maxlength="11" placeholder="Somente números">
+        </div>
+        
+        <button class="btn" onclick="apiCadastrar()" style="font-size: 16px; padding: 15px; font-weight: 900;">
+            QUERO FORJAR MEU DESTINO 🚀
+        </button>
+        
+        <p style="text-align: center; font-size: 10px; margin-top: 15px; color: #888; line-height: 1.4;">
+            Ao clicar, você entra em um sistema de ajuda mútua real.<br>
+            Você terá <b>72 horas</b> para completar seu primeiro ciclo.
+        </p>
 
-    <div id="sessao-login" class="hidden">
+        <button class="btn-link" onclick="alternarTela('sessao-login')" style="margin-top: 20px;">
+            Já faz parte da elite? Entrar agora
+        </button>
+    </div>
+    
+    </div>
+        <div id="sessao-login" class="hidden">
         <h1>🔐 Entrar</h1>
         <div class="input-group"><label>SEU WHATSAPP</label><input type="tel" id="login-numero"></div>
         <div class="input-group"><label>SUA SENHA</label><input type="password" id="login-senha"></div>
